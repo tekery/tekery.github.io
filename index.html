@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tekery — Electronics Resale</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080c14;
+    --surface: #0d1422;
+    --surface2: #111827;
+    --border: rgba(255,255,255,0.07);
+    --accent: #3b82f6;
+    --accent2: #06b6d4;
+    --text: #f0f4ff;
+    --muted: #8b95a8;
+    --card-bg: rgba(13,20,34,0.8);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+    line-height: 1.6;
+  }
+
+  /* Animated grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(59,130,246,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(59,130,246,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Glow orbs */
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.18;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .orb-1 { width: 600px; height: 600px; background: #3b82f6; top: -200px; right: -100px; }
+  .orb-2 { width: 400px; height: 400px; background: #06b6d4; bottom: 100px; left: -150px; }
+
+  /* ── HEADER ── */
+  header {
+    position: sticky; top: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 48px;
+    height: 68px;
+    background: rgba(8,12,20,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    display: flex; align-items: center; gap: 10px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 22px;
+    letter-spacing: -0.5px;
+  }
+  .logo img { height: 36px; width: auto; }
+  .logo-dot { color: var(--accent); }
+
+  nav { display: flex; align-items: center; gap: 8px; }
+  nav a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 8px;
+    transition: all 0.2s;
+  }
+  nav a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+
+  .nav-cta {
+    color: white !important;
+    background: var(--accent) !important;
+    padding: 7px 16px !important;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 14px;
+    transition: opacity 0.2s !important;
+  }
+  .nav-cta:hover { opacity: 0.85; background: var(--accent) !important; }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative; z-index: 1;
+    padding: 130px 48px 100px;
+    max-width: 1100px; margin: 0 auto;
+    text-align: center;
+  }
+
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(59,130,246,0.1);
+    border: 1px solid rgba(59,130,246,0.25);
+    padding: 5px 14px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #93c5fd;
+    margin-bottom: 28px;
+    animation: fadeUp 0.6s ease both;
+  }
+  .hero-badge-dot {
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(48px, 7vw, 88px);
+    font-weight: 800;
+    line-height: 1.0;
+    letter-spacing: -3px;
+    margin-bottom: 24px;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+
+  .hero h1 span {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero p {
+    font-size: 20px;
+    color: var(--muted);
+    font-weight: 300;
+    max-width: 520px;
+    margin: 0 auto 40px;
+    line-height: 1.7;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  .hero-actions {
+    display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--accent);
+    color: white;
+    padding: 13px 28px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 15px;
+    text-decoration: none;
+    transition: all 0.2s;
+    box-shadow: 0 0 30px rgba(59,130,246,0.3);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 40px rgba(59,130,246,0.45); }
+
+  .btn-outline {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: transparent;
+    color: var(--text);
+    padding: 13px 28px;
+    border-radius: 10px;
+    font-weight: 500;
+    font-size: 15px;
+    text-decoration: none;
+    border: 1px solid var(--border);
+    transition: all 0.2s;
+  }
+  .btn-outline:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.15); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── TRUST STRIP ── */
+  .trust-strip {
+    position: relative; z-index: 1;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    background: rgba(13,20,34,0.5);
+    padding: 20px 48px;
+    display: flex; gap: 48px; justify-content: center; flex-wrap: wrap;
+  }
+
+  .trust-item {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 14px; color: var(--muted); font-weight: 400;
+  }
+  .trust-icon {
+    width: 32px; height: 32px;
+    background: rgba(59,130,246,0.1);
+    border: 1px solid rgba(59,130,246,0.2);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px;
+  }
+
+  /* ── SECTIONS ── */
+  .section {
+    position: relative; z-index: 1;
+    max-width: 1100px; margin: 0 auto;
+    padding: 100px 48px;
+  }
+
+  .section-label {
+    font-size: 12px; font-weight: 600;
+    letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(32px, 4vw, 48px);
+    font-weight: 700;
+    letter-spacing: -1.5px;
+    margin-bottom: 16px;
+  }
+
+  .section-sub {
+    color: var(--muted);
+    font-size: 17px;
+    font-weight: 300;
+    max-width: 480px;
+    line-height: 1.7;
+    margin-bottom: 56px;
+  }
+
+  /* ── ABOUT ── */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: center;
+  }
+
+  .about-stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 40px;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    transition: border-color 0.2s;
+  }
+  .stat-card:hover { border-color: rgba(59,130,246,0.3); }
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 36px; font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-label { font-size: 13px; color: var(--muted); }
+
+  .about-visual {
+    position: relative;
+  }
+  .about-card-main {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .about-card-main::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+  .about-icon-row {
+    display: flex; gap: 12px; margin-bottom: 20px;
+  }
+  .about-icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+  }
+  .about-icon.blue { background: rgba(59,130,246,0.15); }
+  .about-icon.cyan { background: rgba(6,182,212,0.15); }
+  .about-card-main p {
+    font-size: 15px; color: var(--muted); line-height: 1.8;
+  }
+
+  /* ── PRODUCTS ── */
+  .products-bg {
+    background: var(--surface2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+  }
+
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    display: flex; flex-direction: column;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(59,130,246,0.04), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+  .card:hover { border-color: rgba(59,130,246,0.35); transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+  .card:hover::after { opacity: 1; }
+
+  .card-category {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 12px;
+  }
+
+  .card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    line-height: 1.4;
+    letter-spacing: -0.3px;
+  }
+
+  .card-condition {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px;
+    color: #34d399;
+    background: rgba(52,211,153,0.1);
+    border: 1px solid rgba(52,211,153,0.2);
+    padding: 3px 10px;
+    border-radius: 100px;
+    margin-bottom: 20px;
+    font-weight: 500;
+  }
+  .card-condition::before {
+    content: '';
+    width: 5px; height: 5px;
+    background: #34d399;
+    border-radius: 50%;
+  }
+
+  .card-spacer { flex: 1; }
+
+  .card-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    background: rgba(59,130,246,0.1);
+    border: 1px solid rgba(59,130,246,0.25);
+    color: #93c5fd;
+    padding: 11px 18px;
+    border-radius: 10px;
+    font-size: 14px; font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+    margin-top: 8px;
+  }
+  .card-btn:hover { background: var(--accent); border-color: var(--accent); color: white; }
+  .card-btn svg { transition: transform 0.2s; }
+  .card-btn:hover svg { transform: translateX(3px); }
+
+  /* ── INSTAGRAM CTA ── */
+  .ig-section {
+    position: relative; z-index: 1;
+    max-width: 1100px; margin: 0 auto;
+    padding: 80px 48px;
+  }
+
+  .ig-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 64px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .ig-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(59,130,246,0.12), transparent 70%);
+    pointer-events: none;
+  }
+
+  .ig-icon {
+    width: 64px; height: 64px;
+    margin: 0 auto 24px;
+    background: linear-gradient(135deg, #f58529, #dd2a7b, #8134af, #515bd4);
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 30px;
+  }
+
+  .ig-card h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 36px; font-weight: 700;
+    letter-spacing: -1px; margin-bottom: 12px;
+  }
+  .ig-card p {
+    color: var(--muted); font-size: 17px;
+    font-weight: 300; margin-bottom: 32px;
+  }
+
+  .ig-btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: linear-gradient(135deg, #f58529, #dd2a7b, #8134af);
+    color: white;
+    padding: 14px 32px;
+    border-radius: 12px;
+    font-size: 15px; font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+    box-shadow: 0 8px 32px rgba(221,42,123,0.3);
+  }
+  .ig-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(221,42,123,0.45); }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative; z-index: 1;
+    border-top: 1px solid var(--border);
+    background: rgba(8,12,20,0.9);
+    padding: 40px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .footer-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 18px;
+  }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a {
+    color: var(--muted); text-decoration: none;
+    font-size: 13px; transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--text); }
+  .footer-copy { color: var(--muted); font-size: 13px; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    header { padding: 0 20px; }
+    .hero { padding: 80px 20px 60px; }
+    .section { padding: 60px 20px; }
+    .about-grid { grid-template-columns: 1fr; gap: 40px; }
+    .ig-card { padding: 40px 24px; }
+    footer { padding: 30px 20px; flex-direction: column; align-items: flex-start; }
+    .trust-strip { padding: 20px; gap: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <img src="1000053170.png" alt="Tekery Logo">
+  </div>
+  <nav>
+    <a href="#about">About</a>
+    <a href="#products">Products</a>
+    <a href="https://www.instagram.com/tekeryofficial/" class="nav-cta">
+      Instagram ↗
+    </a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">
+    <span class="hero-badge-dot"></span>
+    Now listing on Dubizzle
+  </div>
+  <h1>Electronics<br><span>Reimagined</span></h1>
+  <p>Quality-tested tech at honest prices. Controllers, routers, phones — every item verified before it goes live.</p>
+  <div class="hero-actions">
+    <a href="#products" class="btn-primary">
+      Browse Products
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+    <a href="https://www.instagram.com/tekeryofficial/" class="btn-outline">Follow on Instagram</a>
+  </div>
+</div>
+
+<!-- TRUST STRIP -->
+<div class="trust-strip">
+  <div class="trust-item">
+    <div class="trust-icon">✓</div>
+    Every item tested
+  </div>
+  <div class="trust-item">
+    <div class="trust-icon">📋</div>
+    Honest condition listings
+  </div>
+  <div class="trust-item">
+    <div class="trust-icon">💰</div>
+    Competitive pricing
+  </div>
+  <div class="trust-item">
+    <div class="trust-icon">🚀</div>
+    Fast Dubai delivery
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about" class="section">
+  <div class="about-grid">
+    <div>
+      <div class="section-label">About Tekery</div>
+      <h2 class="section-title">Tech you can trust, prices you'll love</h2>
+      <p class="section-sub">Tekery is a Dubai-based electronics resale brand built around one idea — honest deals. We source, test, and list every item so buyers know exactly what they're getting.</p>
+
+      <div class="about-stat-grid">
+        <div class="stat-card">
+          <div class="stat-num">100%</div>
+          <div class="stat-label">Items tested before listing</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">UAE</div>
+          <div class="stat-label">Based in Dubai</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">Fair</div>
+          <div class="stat-label">Transparent pricing, no surprises</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">Real</div>
+          <div class="stat-label">Honest condition descriptions</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="about-visual">
+      <div class="about-card-main">
+        <div class="about-icon-row">
+          <div class="about-icon blue">🎮</div>
+          <div class="about-icon cyan">📡</div>
+          <div class="about-icon blue">📱</div>
+        </div>
+        <p>We specialise in gaming accessories, networking equipment, and consumer electronics — sourcing quality pieces and passing real savings on to buyers across the UAE.</p>
+        <br>
+        <p>Every listing is written by us, with real photos and accurate condition grades. No fluff, no vague descriptions.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<div class="products-bg">
+  <section id="products" class="section">
+    <div class="section-label">Current Listings</div>
+    <h2 class="section-title">Available Now</h2>
+    <p class="section-sub">All items verified and ready to go. New stock added regularly — follow our Instagram to stay updated.</p>
+
+    <div class="cards">
+
+      <div class="card">
+        <div class="card-category">Networking</div>
+        <h3>Linksys Velop WHW0301-ME Mesh WiFi Router</h3>
+        <div class="card-condition">Flawless Condition</div>
+        <p style="font-size:14px; color:var(--muted); line-height:1.7;">Tri-band mesh WiFi system for seamless whole-home coverage. Ideal for larger apartments and villas across the UAE.</p>
+        <div class="card-spacer"></div>
+        <a class="card-btn" href="https://dubai.dubizzle.com/classified/computers-networking/networking-communication/routers/2026/2/15/linksys-velop-whw0301-me-mesh-wifi-router--2-214---71f85427e7854b06a8a2e7ad23bf89aa/">
+          View on Dubizzle
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <div class="card">
+        <div class="card-category">Phones & Communication</div>
+        <h3>Gigaset A270 Cordless Phone</h3>
+        <div class="card-condition">Flawless — Brand New Sealed</div>
+        <p style="font-size:14px; color:var(--muted); line-height:1.7;">Reliable DECT cordless phone with clear audio and long battery life. Sealed in original packaging — never opened.</p>
+        <div class="card-spacer"></div>
+        <a class="card-btn" href="https://dubai.dubizzle.com/classified/electronics/gadgets/landline-telephones/2026/2/15/gigaset-a270-cordless-phone-brand-new-seal-2-605---b1a3a4e555bf47069ee94d029e9e2d28/">
+          View on Dubizzle
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+    </div>
+  </section>
+</div>
+
+<!-- INSTAGRAM CTA -->
+<div class="ig-section">
+  <div class="ig-card">
+    <div class="ig-icon">📸</div>
+    <h2>Follow Tekery on Instagram</h2>
+    <p>New drops, deals, and behind-the-scenes content posted regularly. Be the first to know.</p>
+    <a href="https://www.instagram.com/tekeryofficial/" class="ig-btn">
+      @tekeryofficial ↗
+    </a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Tekery<span style="color:var(--accent)">.</span></div>
+  <div class="footer-links">
+    <a href="#about">About</a>
+    <a href="#products">Products</a>
+    <a href="https://www.instagram.com/tekeryofficial/">Instagram</a>
+  </div>
+  <div class="footer-copy">© 2026 Tekery. Dubai, UAE.</div>
+</footer>
+
+</body>
+</html>
